@@ -4,7 +4,7 @@
 path = context.path.nil? or context.path.empty? ? path = "~/.marimo-notebooks" : path = context.path
 
 
-if File.directory? path
+if File.directory? path or not File.exist? path
   dir = path
 else
   dir = File.dirname(path)
@@ -19,6 +19,7 @@ module load <%= context.pythonmodule %> uv
 
 # Output debug info
 module list
+
 
 mkdir -p <%= dir %>
 

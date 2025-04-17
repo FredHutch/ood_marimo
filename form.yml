@@ -50,7 +50,7 @@ attributes:
     widget: "path_selector"
     # value: "~/.marimo-notebooks"
     help: |
-      **(Optional)** Path to a directory to start marimo in, or a notebook (`.py` file) to open.
+      **(Optional)** Path to a directory to start marimo in, or an existing notebook (`.py` file) to open.
       If not specified, the default is your `~/.marimo-notebooks` directory, which will be 
       created if it does not exist. 
     show_hidden: true
