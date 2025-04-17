@@ -1,0 +1,27 @@
+
+# Export the module function if it exists
+[[ $(type -t module) == "function" ]] && export -f module
+
+# Find available port to run server on
+port=$(find_port)
+
+# Define a password and export it for RStudio authentication
+password="$(create_passwd 16)"
+export RSTUDIO_PASSWORD="${password}"
+
+
+# I would like to call the token "token" throughout but there is some 
+# magic that I do not understand that picks up the password as "password" from before.sh.erb
+# and makes it available in view.html.erb, and if I change that variable name
+# to "token" it breaks the magic. So I will leave it as "password".
+
+
+echo $password > token
+chmod 0400 token
+
+# Define CSRF_TOKEN and export it for auth
+<%-
+  require 'securerandom'
+  csrftoken=SecureRandom.uuid
+-%>
+export csrf_token="<%= csrftoken %>"

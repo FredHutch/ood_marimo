@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+<%
+path = context.path.nil? or context.path.empty? ? path = "~/.marimo-notebooks" : path = context.path
+
+
+if File.directory? path
+  dir = path
+else
+  dir = File.dirname(path)
+end
+
+%>
+
+module purge
+ 
+module load <%= context.pythonmodule %> uv
+
+
+# Output debug info
+module list
+
+mkdir -p <%= dir %>
+
+
+token=$(cat token)
+
+cd <%= dir %>
+echo "Changed directory to $(pwd)"
+
+# TODO use a token
+uvx --python $(which python) marimo edit \
+  --proxy openondemand.fredhutch.org:443 --token-password $token \
+  --headless --host 0.0.0.0 --port ${port} \
+  --base-url /node/$(hostname)/${port} <%= path %> 
+

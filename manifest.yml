@@ -1,0 +1,6 @@
+---
+name: marimo
+category: Interactive Apps
+role: batch_connect
+description: |
+  This app will launch [marimo](https://marimo.io/), an open-source reactive notebook for Python — reproducible, git-friendly, SQL built-in, executable as a script, and shareable as an app.
