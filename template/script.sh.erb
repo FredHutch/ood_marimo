@@ -13,7 +13,7 @@ end
 %>
 
 module purge
- 
+
 module load <%= context.pythonmodule %> uv
 
 
@@ -30,9 +30,12 @@ rm token
 cd <%= dir %>
 echo "Changed directory to $(pwd)"
 
+rm -rf .marimo-dependencies
+pip download --no-deps --only-binary=:all: -d ./.marimo-dependencies/ "typing-extensions>=4.12.2"
+whl=$(ls -d $PWD/.marimo-dependencies/*.whl)
+
 # TODO use a token
-uvx --python $(which python) marimo edit \
+PYTHONPATH=$whl:$PYTHONPATH uvx --python $(which python) marimo edit \
   --proxy openondemand.fredhutch.org:443 --token-password $token \
   --headless --host 0.0.0.0 --port ${port} \
-  --base-url /node/$(hostname)/${port} <%= path %> 
-
+  --base-url /node/$(hostname)/${port} <%= path %>
