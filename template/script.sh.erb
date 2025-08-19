@@ -1,8 +1,19 @@
 #!/usr/bin/env bash
 
+set -e
+
+
 <%
+
+def true?(obj)
+  obj.to_s.downcase == "true"
+end
+
 path = context.path.nil? or context.path.empty? ? path = "~/.marimo-notebooks" : path = context.path
 
+venv = context.venv
+
+venv_plus_module = true? context.venv_plus_module
 
 if File.directory? path or not File.exist? path
   dir = path
@@ -12,9 +23,15 @@ end
 
 %>
 
+
 module purge
 
-module load <%= context.pythonmodule %> uv
+module load uv
+
+
+<% if (!venv.empty? and venv_plus_module) or (venv.empty?) %>
+module load <%= context.pythonmodule %>
+<% end %>
 
 
 # Output debug info
@@ -28,14 +45,24 @@ token=$(cat token)
 rm token
 
 cd <%= dir %>
-echo "Changed directory to $(pwd)"
 
 rm -rf .marimo-dependencies
-pip download --no-deps --only-binary=:all: -d ./.marimo-dependencies/ "typing-extensions>=4.12.2"
+
+<% if !venv.empty? %>
+  source <%= venv %>
+  CONDA_PREFIX='' uv pip install marimo
+  <% command = "" %>
+<% else %>
+    <% command = "uvx --python $(which python) " %>
+<% end %>
+
+python3 -m ensurepip
+python3 -m pip download --no-deps --only-binary=:all: -d ./.marimo-dependencies/ "typing-extensions>=4.12.2"
 whl=$(ls -d $PWD/.marimo-dependencies/*.whl)
 
+
 # TODO use a token
-PYTHONPATH=$whl:$PYTHONPATH uvx --python $(which python) marimo edit \
+PYTHONPATH=$whl:$PYTHONPATH <%= command %> marimo edit \
   --proxy openondemand.fredhutch.org:443 --token-password $token \
   --headless --host 0.0.0.0 --port ${port} \
   --base-url /node/$(hostname)/${port} <%= path %>

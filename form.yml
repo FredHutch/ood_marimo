@@ -11,6 +11,8 @@ form:
   - num_cores
   - want_gpu
   - path
+  - venv
+  - venv_plus_module
 attributes:
   want_gpu:
     widget: "check_box"
@@ -45,12 +47,36 @@ attributes:
     help: |
       Choose a python module to use with marimo. This means all the packages in that
       module will be available in your notebook. marimo only works with recent versions
-      of Python, so you will not see all `fhPython` modules here. 
+      of Python, so you will not see all `fhPython` modules here.
   path:
     widget: "path_selector"
     # value: "~/.marimo-notebooks"
     help: |
       **(Optional)** Path to a directory to start marimo in, or an existing notebook (`.py` file) to open.
-      If not specified, the default is your `~/.marimo-notebooks` directory, which will be 
-      created if it does not exist. 
+      If not specified, the default is your `~/.marimo-notebooks` directory, which will be
+      created if it does not exist.
     show_hidden: true
+  venv:
+    widget: "path_selector"
+    help: |
+      **(Optional)** Path to the "bin/activate" script of a
+      virtual environment to start marimo in.
+      marimo will be installed in this environment if it isn't
+      already installed. Packages in the `fhPython` module you chose
+      above will **not** be available in your notebook unless
+      you loaded the module and then created the virtual environment
+      with `ml uv && uv venv --python $(which python) --system-site-packages ...`,
+      AND you check the box below.
+    show_hidden: true
+    readonly: false
+    data-target-file-type: files
+  venv_plus_module:
+    widget: "check_box"
+    label: "Use virtual environment + module"
+    help: |
+      Yes, I've created my virtual environment as described above, and
+      want access to packages in both the fhPython module above and
+      the virtual environment.
+    checked_value: true
+    unchecked_value: false
+    id: 'venv_plus_module'
